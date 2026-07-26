@@ -11,6 +11,7 @@ from ..core.analyzer import CodeAnalyzer, AnalyzerConfig
 from ..core.models import Severity, ReviewResult
 from ..fixers.auto_fix import AutoFixer
 from .ai_features import generate_code_from_persian, translate_code, explain_code, detect_language
+from .ai_provider import AIProvider
 
 
 # Main keyboard buttons
@@ -18,8 +19,8 @@ MAIN_KEYBOARD = [
     ["🔍 Review", "🔧 Fix"],
     ["📊 Stats", "📈 Analyze"],
     ["💬 Chat", "🌍 Translate"],
-    ["✍️ Write", "📎 Upload"],
-    ["❓ Help"],
+    ["✍️ Write", "🤖 AI"],
+    ["📎 Upload", "❓ Help"],
 ]
 
 
@@ -33,6 +34,7 @@ class TelegramBot:
     - Auto-fix suggestions
     - Inline queries
     - Custom keyboards
+    - AI-powered analysis
     - Group and private chats
     
     Example:
@@ -44,6 +46,7 @@ class TelegramBot:
         self.token = token or os.getenv("TELEGRAM_BOT_TOKEN", "")
         self.analyzer = CodeAnalyzer()
         self.fixer = AutoFixer()
+        self.ai_provider = AIProvider()
         self._bot = None
         self._dispatcher = None
         self._user_files: dict[int, dict] = {}  # Store last file per user
@@ -79,8 +82,8 @@ class TelegramBot:
                     [KeyboardButton(text="🔍 Review"), KeyboardButton(text="🔧 Fix")],
                     [KeyboardButton(text="📊 Stats"), KeyboardButton(text="📈 Analyze")],
                     [KeyboardButton(text="💬 Chat"), KeyboardButton(text="🌍 Translate")],
-                    [KeyboardButton(text="✍️ Write"), KeyboardButton(text="📎 Upload")],
-                    [KeyboardButton(text="❓ Help")],
+                    [KeyboardButton(text="✍️ Write"), KeyboardButton(text="🤖 AI")],
+                    [KeyboardButton(text="📎 Upload"), KeyboardButton(text="❓ Help")],
                 ],
                 resize_keyboard=True,
                 one_time_keyboard=False,
@@ -335,6 +338,30 @@ Type your request! 💻
 """
             await message.reply(text, reply_markup=get_main_keyboard())
         
+        # Handle keyboard button: AI
+        @dp.message(F.text == "🤖 AI")
+        async def btn_ai(message: Message):
+            text = """
+🤖 <b>AI-Powered Analysis</b>
+
+Send code and get AI insights!
+
+<b>Features:</b>
+1. 🔍 <b>AI Review</b> - Deep code analysis
+2. 📖 <b>AI Explain</b> - Detailed explanation
+3. 💡 <b>AI Suggest</b> - Improvement suggestions
+4. ✍️ <b>AI Generate</b> - Generate from description
+
+<b>How to use:</b>
+1. Send code + "AI بررسی کن"
+2. Send code + "AI توضیح بده"
+3. Send code + "AI پیشنهاد بده"
+4. "AI بنویس که..."
+
+<b>Note:</b> Requires OpenAI API key configured.
+"""
+            await message.reply(text, reply_markup=get_main_keyboard())
+        
         # Handle keyboard button: Help
         @dp.message(F.text == "❓ Help")
         async def btn_help(message: Message):
@@ -581,9 +608,92 @@ Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
                 return
             
             # Skip keyboard buttons
-            keyboard_buttons = ["🔍 Review", "🔧 Fix", "📊 Stats", "📈 Analyze", "📎 Upload", "❓ Help", "💬 Chat", "🌍 Translate", "✍️ Write"]
+            keyboard_buttons = ["🔍 Review", "🔧 Fix", "📊 Stats", "📈 Analyze", "📎 Upload", "❓ Help", "💬 Chat", "🌍 Translate", "✍️ Write", "🤖 AI"]
             if text in keyboard_buttons:
                 return
+            
+            # Check for AI requests first
+            ai_keywords = ["AI بررسی", "AI توضیح", "AI پیشنهاد", "AI بنویس", "ai review", "ai explain", "ai suggest", "ai generate"]
+            if any(keyword.lower() in text.lower() for keyword in ai_keywords):
+                try:
+                    # Extract code if present
+                    code, language = self._extract_code(message)
+                    
+                    if "AI بررسی" in text or "ai review" in text.lower():
+                        if code:
+                            await message.reply("🤖 <b>AI Analyzing...</b>\n\nPlease wait...")
+                            result = await self.ai_provider.analyze_code(code, language)
+                            if result["success"]:
+                                response = f"""🤖 <b>AI Analysis:</b>
+
+{result['analysis']}"""
+                                await message.reply(response, reply_markup=get_main_keyboard())
+                            else:
+                                await message.reply(f"❌ AI Error: {result['error']}", reply_markup=get_main_keyboard())
+                        else:
+                            await message.reply("📝 Send code with 'AI بررسی' to analyze.", reply_markup=get_main_keyboard())
+                        return
+                    
+                    elif "AI توضیح" in text or "ai explain" in text.lower():
+                        if code:
+                            await message.reply("🤖 <b>AI Explaining...</b>\n\nPlease wait...")
+                            result = await self.ai_provider.explain_code(code, language)
+                            if result["success"]:
+                                response = f"""📖 <b>AI Explanation:</b>
+
+{result['explanation']}"""
+                                await message.reply(response, reply_markup=get_main_keyboard())
+                            else:
+                                await message.reply(f"❌ AI Error: {result['error']}", reply_markup=get_main_keyboard())
+                        else:
+                            await message.reply("📝 Send code with 'AI توضیح' to explain.", reply_markup=get_main_keyboard())
+                        return
+                    
+                    elif "AI پیشنهاد" in text or "ai suggest" in text.lower():
+                        if code:
+                            await message.reply("🤖 <b>AI Suggesting...</b>\n\nPlease wait...")
+                            result = await self.ai_provider.suggest_improvements(code, language)
+                            if result["success"]:
+                                response = f"""💡 <b>AI Suggestions:</b>
+
+{result['suggestions']}"""
+                                await message.reply(response, reply_markup=get_main_keyboard())
+                            else:
+                                await message.reply(f"❌ AI Error: {result['error']}", reply_markup=get_main_keyboard())
+                        else:
+                            await message.reply("📝 Send code with 'AI پیشنهاد' to get suggestions.", reply_markup=get_main_keyboard())
+                        return
+                    
+                    elif "AI بنویس" in text or "ai generate" in text.lower():
+                        # Extract description after "AI بنویس"
+                        description = text.replace("AI بنویس", "").replace("ai generate", "").strip()
+                        if not description:
+                            await message.reply("📝 Add description after 'AI بنویس'\n\nExample: AI بنویس که hello چاپ کنه", reply_markup=get_main_keyboard())
+                            return
+                        
+                        # Detect language
+                        from .ai_features import detect_language
+                        lang = detect_language(text)
+                        
+                        await message.reply("🤖 <b>AI Generating...</b>\n\nPlease wait...")
+                        result = await self.ai_provider.generate_code(description, lang)
+                        if result["success"]:
+                            response = f"""✍️ <b>AI Generated Code ({lang.title()}):</b>
+
+<code>{self._escape_html(result['code'])}</code>
+
+💡 <b>Tip:</b> Copy and use this code!"""
+                            await message.reply(response, reply_markup=get_main_keyboard())
+                        else:
+                            await message.reply(f"❌ AI Error: {result['error']}", reply_markup=get_main_keyboard())
+                        return
+                
+                except Exception as e:
+                    print(f"Error in AI handler: {e}")
+                    await message.reply(
+                        "❌ Error processing AI request. Please try again.",
+                        reply_markup=get_main_keyboard()
+                    )
             
             # Check for Persian code generation keywords
             persian_keywords = ["بنویس", "بساز", "کد", "چاپ", "سلام دنیا", "hello", "توضیح", "ترجمه", "ماشین حساب", "فیبوناچی", "لیست", "حلقه", "شرط", "کلاس"]
@@ -771,7 +881,7 @@ Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
             return "", ""
         
         # Handle keyboard button presses (ignore them)
-        if text in ["🔍 Review", "🔧 Fix", "📊 Stats", "📈 Analyze", "📎 Upload", "❓ Help", "💬 Chat", "🌍 Translate", "✍️ Write"]:
+        if text in ["🔍 Review", "🔧 Fix", "📊 Stats", "📈 Analyze", "📎 Upload", "❓ Help", "💬 Chat", "🌍 Translate", "✍️ Write", "🤖 AI"]:
             return "", ""
         
         # Plain text code (not a command)
