@@ -33,6 +33,7 @@ class TelegramBot:
         self.fixer = AutoFixer()
         self._bot = None
         self._dispatcher = None
+        self._user_files: dict[int, dict] = {}  # Store last file per user
     
     def _setup_handlers(self):
         """Setup bot command handlers."""
@@ -80,6 +81,15 @@ Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
         async def cmd_review(message: Message):
             code, language = self._extract_code(message)
             
+            # Check for stored file if no code provided
+            if not code and message.from_user:
+                user_id = message.from_user.id
+                if user_id in self._user_files:
+                    stored = self._user_files[user_id]
+                    code = stored["content"]
+                    language = stored["language"]
+                    await message.reply(f"📄 Reviewing stored file: {stored['name']}")
+            
             if not code:
                 await message.reply(
                     "📝 Please send code to review.\n\n"
@@ -100,6 +110,14 @@ Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
         @dp.message(Command("analyze"))
         async def cmd_analyze(message: Message):
             code, language = self._extract_code(message)
+            
+            # Check for stored file if no code provided
+            if not code and message.from_user:
+                user_id = message.from_user.id
+                if user_id in self._user_files:
+                    stored = self._user_files[user_id]
+                    code = stored["content"]
+                    language = stored["language"]
             
             if not code:
                 await message.reply("📝 Please send code to analyze.")
@@ -123,6 +141,15 @@ Lines: {result.lines_analyzed}
         @dp.message(Command("fix"))
         async def cmd_fix(message: Message):
             code, language = self._extract_code(message)
+            
+            # Check for stored file if no code provided
+            if not code and message.from_user:
+                user_id = message.from_user.id
+                if user_id in self._user_files:
+                    stored = self._user_files[user_id]
+                    code = stored["content"]
+                    language = stored["language"]
+                    await message.reply(f"📄 Fixing stored file: {stored['name']}")
             
             if not code:
                 await message.reply("📝 Please send code to fix.")
@@ -215,12 +242,22 @@ Issues: {len(result.issues)}
                 content = Path(file_path).read_text(encoding="utf-8")
                 language = self._detect_language(file_ext)
                 
+                # Store file for user
+                if message.from_user:
+                    self._user_files[message.from_user.id] = {
+                        "name": message.document.file_name,
+                        "content": content,
+                        "language": language,
+                    }
+                
                 result = self.analyzer.analyze_code(content, language)
                 
                 response = f"""
 📄 <b>File Review: {message.document.file_name}</b>
 
 {self._format_result(result)}
+
+💡 <b>Tip:</b> Use /review, /fix, or /stats to work with this file again!
 """
                 await message.reply(response, parse_mode=ParseMode.HTML)
             except Exception as e:
