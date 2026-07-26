@@ -3,16 +3,16 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ai-code-reviewer"
+name = "code-sentinel"
 version = "0.1.0"
-description = "AI-powered code review tool"
+description = "AI-Powered Code Reviewer - Smart code analysis, security scanning, auto-fix, and GitHub PR integration"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"
 authors = [
     {name = "Mohammad", email = "mohammad@example.com"}
 ]
-keywords = ["code-review", "ai", "linting", "security", "quality"]
+keywords = ["code-review", "ai", "linting", "security", "quality", "telegram-bot"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -36,14 +36,24 @@ dev = [
     "ruff>=0.4.0",
     "black>=24.0.0",
 ]
+telegram = [
+    "aiogram>=3.4.0",
+]
+all = [
+    "aiogram>=3.4.0",
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.4.0",
+]
 
 [project.scripts]
-code-reviewer = "code_reviewer.cli:main"
+code-sentinel = "code_reviewer.cli:main"
+sentinel-bot = "code_reviewer.telegram.bot:run_bot"
 
 [project.urls]
-Homepage = "https://github.com/fiavo/ai-code-reviewer"
-Repository = "https://github.com/fiavo/ai-code-reviewer"
-Issues = "https://github.com/fiavo/ai-code-reviewer/issues"
+Homepage = "https://github.com/fiavo/code-sentinel"
+Repository = "https://github.com/fiavo/code-sentinel"
+Issues = "https://github.com/fiavo/code-sentinel/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

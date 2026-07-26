@@ -1,106 +1,56 @@
-# AI Code Reviewer
+# 🛡️ CodeSentinel
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](https://github.com/fiavo/ai-code-reviewer)
+[![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](https://github.com/fiavo/code-sentinel)
 
-🔍 **AI-Powered Code Review Tool**
+**AI-Powered Code Review Tool**
 
-A professional-grade code reviewer that uses AI to analyze code quality, security, performance, and style. Supports multiple languages and integrates with GitHub for PR reviews.
+Smart code analysis, security scanning, auto-fix, and GitHub PR integration.
 
 ## Features
 
-### 🛡️ Security Analysis
-- Hardcoded secrets detection
-- SQL injection vulnerabilities
-- Unsafe eval/exec usage
-- Weak hashing algorithms
-- Debug mode in production
-
-### ⚡ Performance Detection
-- N+1 query patterns
-- String concatenation in loops
-- Global variable usage
-- Bare except clauses
-
-### 🎨 Style Checking
-- Line length limits
-- Trailing whitespace
-- TODO/FIXME comments
-- Code formatting
-
-### 🧠 Complexity Analysis
-- Deep nesting detection
-- Function length limits
-- Code complexity metrics
-
-### 🤖 AI-Powered Analysis
-- Deep code understanding
-- Context-aware suggestions
-- Best practice recommendations
-- Architecture analysis
-
-### 🔧 Auto-Fix
-- Automatic issue fixing
-- Diff generation
-- Dry-run mode
-- Safe refactoring
-
-### 🐙 GitHub Integration
-- PR review automation
-- Inline comments
-- Review summaries
-- Status checks
+- 🛡️ **Security Analysis** - Detect vulnerabilities and secrets
+- ⚡ **Performance Detection** - Find optimization opportunities
+- 🎨 **Style Checking** - Enforce code standards
+- 🧠 **Complexity Analysis** - Measure code complexity
+- 🤖 **AI-Powered** - Deep understanding with OpenAI
+- 🔧 **Auto-Fix** - Automatically fix common issues
+- 🐙 **GitHub Integration** - PR review automation
+- 📱 **Telegram Bot** - Review code from Telegram
 
 ## Installation
 
 ```bash
-# Install from source
-git clone https://github.com/fiavo/ai-code-reviewer.git
-cd ai-code-reviewer
+# Basic installation
 pip install -e .
 
-# Or install with dev dependencies
-pip install -e ".[dev]"
+# With Telegram bot support
+pip install -e ".[telegram]"
+
+# With all optional dependencies
+pip install -e ".[all]"
 ```
 
 ## Usage
 
-### CLI Commands
+### CLI
 
 ```bash
 # Review a file
-code-reviewer review src/main.py
+code-sentinel review src/main.py
 
-# Review a directory
-code-reviewer review ./src
-
-# Review with AI analysis
-code-reviewer review src/ --ai
+# Review with AI
+code-sentinel review src/ --ai
 
 # Auto-fix issues
-code-reviewer review src/ --fix
-
-# Show diff without applying
-code-reviewer review src/ --fix --dry-run
+code-sentinel review src/ --fix
 
 # Analyze code string
-code-reviewer analyze "print('hello')" --language python
+code-sentinel analyze "print('hello')"
 
 # Show statistics
-code-reviewer stats ./src
-```
-
-### Options
-
-```
---ai              Use AI for deeper analysis
---provider        AI provider (openai, local)
---model           AI model (gpt-4, gpt-3.5-turbo)
---fix             Auto-fix issues
---dry-run         Show fixes without applying
---verbose, -v     Verbose output
---output, -o      Save results to file
+code-sentinel stats ./src
 ```
 
 ### Python API
@@ -108,51 +58,86 @@ code-reviewer stats ./src
 ```python
 from code_reviewer import CodeAnalyzer
 
-# Analyze a file
 analyzer = CodeAnalyzer()
-result = analyzer.analyze_path("src/main.py")
+result = analyzer.analyze_code('password = "secret123"', "python")
 
 print(f"Score: {result.score}")
 print(f"Issues: {len(result.issues)}")
-
-# Analyze code string
-result = analyzer.analyze_code(
-    code="eval(user_input)",
-    language="python"
-)
-
-# Custom rules
-from code_reviewer.core.rules import BaseRule
-
-class MyRule(BaseRule):
-    name = "my-rule"
-    description = "My custom rule"
-    category = IssueCategory.BEST_PRACTICE
-    severity = Severity.WARNING
-    
-    def check(self, file_path: str, content: str) -> list[CodeIssue]:
-        # Your rule logic here
-        return []
-
-analyzer.add_rule(MyRule())
 ```
 
-### GitHub Integration
+## 📱 Telegram Bot
+
+### Setup
+
+1. Create a bot with [@BotFather](https://t.me/BotFather)
+2. Get your bot token
+3. Set the token:
+
+```bash
+export TELEGRAM_BOT_TOKEN="your-bot-token"
+```
+
+### Run the Bot
+
+```bash
+# Method 1: Using the entry point
+sentinel-bot
+
+# Method 2: Using Python module
+python -m code_reviewer.telegram.bot
+
+# Method 3: With token argument
+python -m code_reviewer.telegram.bot --token "your-token"
+```
+
+### Bot Commands
+
+| Command | Description |
+|---------|-------------|
+| `/start` | Show welcome message |
+| `/help` | Show help and commands |
+| `/review` | Review code or file |
+| `/analyze` | Quick code analysis |
+| `/fix` | Auto-fix issues |
+| `/stats` | Code statistics |
+
+### How to Use
+
+**Option 1: Code Block**
+```
+/review
+```python
+def hello():
+    password = "secret123"
+    eval(user_input)
+```
+```
+
+**Option 2: File Upload**
+1. Upload a code file (.py, .js, .ts, etc.)
+2. Type `/review`
+
+**Option 3: Inline Code**
+Just paste code and add `/analyze`
+
+### Bot Features
+
+- ✅ Supports 10+ programming languages
+- ✅ Analyzes code blocks automatically
+- ✅ File upload support
+- ✅ Auto-fix with diff display
+- ✅ Works in groups and private chats
+- ✅ Detailed statistics
+
+## GitHub Integration
 
 ```python
-import asyncio
 from code_reviewer.github import GitHubPRReviewer
 
 async def review_pr():
     reviewer = GitHubPRReviewer(token="ghp_...")
-    
-    # Review PR
     result = await reviewer.review_pr("owner/repo", 123)
-    
-    # Post review comment
     await reviewer.post_review("owner/repo", 123, result)
-
-asyncio.run(review_pr())
 ```
 
 ## Supported Languages
@@ -168,7 +153,6 @@ asyncio.run(review_pr())
 - PHP
 - Swift
 - Kotlin
-- And more...
 
 ## Rules
 
@@ -183,20 +167,18 @@ asyncio.run(review_pr())
 
 ### Custom Rules
 
-Create custom rules by extending `BaseRule`:
-
 ```python
 from code_reviewer.core.rules import BaseRule
 from code_reviewer.core.models import CodeIssue, Severity, IssueCategory
 
-class NoPrintRule(BaseRule):
+class MyRule(BaseRule):
     @property
     def name(self) -> str:
-        return "no-print"
+        return "my-rule"
     
     @property
     def description(self) -> str:
-        return "Disallow print statements"
+        return "My custom rule"
     
     @property
     def category(self) -> IssueCategory:
@@ -209,12 +191,11 @@ class NoPrintRule(BaseRule):
     def check(self, file_path: str, content: str) -> list[CodeIssue]:
         issues = []
         for line_num, line in enumerate(content.splitlines(), 1):
-            if "print(" in line:
+            if "TODO" in line:
                 issues.append(self._create_issue(
                     file_path=file_path,
                     line=line_num,
-                    message="Print statement found",
-                    suggestion="Use logging instead",
+                    message="TODO found",
                 ))
         return issues
 ```
@@ -229,31 +210,16 @@ export OPENAI_API_KEY="sk-..."
 
 # GitHub Integration
 export GITHUB_TOKEN="ghp_..."
-```
 
-### Config File
-
-Create `.code-reviewer.toml`:
-
-```toml
-[rules]
-max_line_length = 120
-max_function_length = 50
-
-[ai]
-provider = "openai"
-model = "gpt-4"
-temperature = 0.3
-
-[github]
-auto_comment = true
+# Telegram Bot
+export TELEGRAM_BOT_TOKEN="your-bot-token"
 ```
 
 ## Development
 
 ```bash
 # Install dev dependencies
-pip install -e ".[dev]"
+pip install -e ".[all]"
 
 # Run tests
 pytest tests/ -v
@@ -261,9 +227,6 @@ pytest tests/ -v
 # Run linting
 ruff check src/
 ruff format src/
-
-# Run type checking
-mypy src/
 ```
 
 ## License
