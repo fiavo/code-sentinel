@@ -276,6 +276,36 @@ Lines: {result.lines_analyzed}
                 reply_markup=get_main_keyboard()
             )
         
+        # Handle keyboard button: Help
+        @dp.message(F.text == "❓ Help")
+        async def btn_help(message: Message):
+            text = """
+🛡️ <b>CodeSentinel Bot</b>
+
+AI-powered code review at your fingertips!
+
+<b>Keyboard Buttons:</b>
+🔍 Review - Review code or file
+🔧 Fix - Auto-fix issues
+📊 Stats - Code statistics
+📈 Analyze - Quick analysis
+📎 Upload - Upload a file
+❓ Help - This help message
+
+<b>Commands:</b>
+/review - Review code
+/analyze - Quick analysis
+/fix - Auto-fix issues
+/stats - Code statistics
+
+<b>Inline Mode:</b>
+Type <code>@code_sentinelbot</code> in any chat followed by code!
+
+<b>Supported languages:</b>
+Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
+"""
+            await message.reply(text, reply_markup=get_main_keyboard())
+        
         # Review command
         @dp.message(Command("review"))
         async def cmd_review(message: Message):
