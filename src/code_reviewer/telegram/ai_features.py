@@ -252,20 +252,32 @@ def detect_language(text: str) -> str:
     """
     text_lower = text.lower()
     
-    if any(word in text_lower for word in ["c", "سی", "زبان c"]):
-        # Check if it's C++ or just C
-        if "پلاس" in text_lower or "++" in text_lower or "cpp" in text_lower:
-            return "cpp"
+    # Check for C++ first (before C)
+    if any(word in text_lower for word in ["پلاس", "++", "cpp", "سی پلاس"]):
+        return "cpp"
+    
+    # Check for C
+    if any(word in text_lower for word in ["سی ", "زبان c", " به c", " به سی"]):
         return "c"
-    elif any(word in text_lower for word in ["جاوا", "java"]):
-        return "java"
-    elif any(word in text_lower for word in ["جاسکریپت", "javascript", "js"]):
+    
+    # Check for JavaScript (before Java!)
+    if any(word in text_lower for word in ["جاسکریپت", "javascript", "js", "جاوااسکریپت", "جاوا اسکریپت"]):
         return "javascript"
-    elif any(word in text_lower for word in ["گو", "go", "گولنگ"]):
+    
+    # Check for Java
+    if any(word in text_lower for word in ["جاوا", "java"]):
+        return "java"
+    
+    # Check for Go
+    if any(word in text_lower for word in ["گو", "go", "گولنگ"]):
         return "go"
-    elif any(word in text_lower for word in ["راست", "rust"]):
+    
+    # Check for Rust
+    if any(word in text_lower for word in ["راست", "rust"]):
         return "rust"
-    elif any(word in text_lower for word in ["پایتون", "python", "پیتون"]):
+    
+    # Check for Python
+    if any(word in text_lower for word in ["پایتون", "python", "پیتون"]):
         return "python"
     
     # Default to Python
