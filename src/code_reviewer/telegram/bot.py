@@ -270,8 +270,18 @@ Issues: {len(result.issues)}
             # Will be handled by document handler
             return "", ""
         
-        # Plain text code
-        if text and not text.startswith("/"):
+        # Handle commands with code (e.g., /fix Print("heel"))
+        if text.startswith("/"):
+            # Extract code after command
+            parts = text.split(maxsplit=1)
+            if len(parts) > 1:
+                code = parts[1].strip()
+                if code:
+                    return code, "python"
+            return "", ""
+        
+        # Plain text code (not a command)
+        if text:
             return text, "python"
         
         return "", ""
