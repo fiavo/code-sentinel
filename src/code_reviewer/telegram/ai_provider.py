@@ -1,5 +1,5 @@
 """
-AI-powered code analysis using OpenAI.
+AI-powered code analysis using OpenAI-compatible API.
 """
 
 import os
@@ -9,16 +9,16 @@ import httpx
 
 class AIProvider:
     """
-    AI provider for code analysis using OpenAI API.
+    AI provider for code analysis using OpenAI-compatible API.
     
     Example:
         provider = AIProvider(api_key="sk-...")
         analysis = await provider.analyze_code(code)
     """
     
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, base_url: Optional[str] = None):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY", "")
-        self.base_url = "https://api.openai.com/v1"
+        self.base_url = base_url or os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
     
     async def analyze_code(self, code: str, language: str = "python") -> dict:
         """
@@ -34,7 +34,7 @@ class AIProvider:
         if not self.api_key:
             return {
                 "success": False,
-                "error": "OpenAI API key not configured"
+                "error": "API key not configured"
             }
         
         prompt = f"""Analyze this {language} code and provide:
@@ -103,7 +103,7 @@ Provide the analysis in a structured format."""
         if not self.api_key:
             return {
                 "success": False,
-                "error": "OpenAI API key not configured"
+                "error": "API key not configured"
             }
         
         prompt = f"""Explain this {language} code in detail in Persian (Farsi):
@@ -171,7 +171,7 @@ Provide a clear, educational explanation in Persian."""
         if not self.api_key:
             return {
                 "success": False,
-                "error": "OpenAI API key not configured"
+                "error": "API key not configured"
             }
         
         prompt = f"""Suggest improvements for this {language} code:
@@ -240,7 +240,7 @@ Provide specific, actionable suggestions."""
         if not self.api_key:
             return {
                 "success": False,
-                "error": "OpenAI API key not configured"
+                "error": "API key not configured"
             }
         
         prompt = f"""Generate {language} code based on this description:
