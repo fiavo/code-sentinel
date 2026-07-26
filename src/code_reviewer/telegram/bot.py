@@ -10,7 +10,7 @@ from pathlib import Path
 from ..core.analyzer import CodeAnalyzer, AnalyzerConfig
 from ..core.models import Severity, ReviewResult
 from ..fixers.auto_fix import AutoFixer
-from .ai_features import generate_code_from_persian, translate_code, explain_code
+from .ai_features import generate_code_from_persian, translate_code, explain_code, detect_language
 
 
 # Main keyboard buttons
@@ -600,9 +600,22 @@ Issues: {len(result.issues)}
             
             # Check for code generation request
             if any(word in text for word in ["بنویس", "بساز", "کد"]):
+                # Detect language
+                lang = detect_language(text)
+                lang_names = {
+                    "python": "Python",
+                    "c": "C",
+                    "cpp": "C++",
+                    "javascript": "JavaScript",
+                    "java": "Java",
+                    "go": "Go",
+                    "rust": "Rust",
+                }
+                lang_name = lang_names.get(lang, "Python")
+                
                 code = generate_code_from_persian(text)
                 if code:
-                    response = f"""✍️ <b>Generated Code:</b>
+                    response = f"""✍️ <b>Generated Code ({lang_name}):</b>
 
 <code>{self._escape_html(code)}</code>
 
