@@ -570,15 +570,28 @@ Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
 <b>Tip:</b> Use buttons below for more actions!"""
                 await message.reply(response, reply_markup=get_main_keyboard())
         
-        # Handle Persian code generation requests
-        @dp.message(F.text.contains("بنویس") | F.text.contains("بساز") | F.text.contains("کد") | F.text.contains("چاپ") | F.text.contains("سلام دنیا") | F.text.contains("hello") | F.text.contains("توضیح") | F.text.contains("ترجمه"))
-        async def handle_persian_request(message: Message):
+        # Catch-all handler for Persian requests (MUST BE LAST)
+        @dp.message()
+        async def handle_any_message(message: Message):
+            """Handle any unmatched message - check for Persian keywords."""
             text = message.text or ""
             
-            try:
-                # Check for code generation request
-                if any(word in text for word in ["بنویس", "بساز", "کد"]):
+            # Skip if it's a command
+            if text.startswith("/"):
+                return
+            
+            # Skip keyboard buttons
+            keyboard_buttons = ["🔍 Review", "🔧 Fix", "📊 Stats", "📈 Analyze", "📎 Upload", "❓ Help", "💬 Chat", "🌍 Translate", "✍️ Write"]
+            if text in keyboard_buttons:
+                return
+            
+            # Check for Persian code generation keywords
+            persian_keywords = ["بنویس", "بساز", "کد", "چاپ", "سلام دنیا", "hello", "توضیح", "ترجمه", "ماشین حساب", "فیبوناچی", "لیست", "حلقه", "شرط", "کلاس"]
+            
+            if any(keyword in text for keyword in persian_keywords):
+                try:
                     # Detect language
+                    from .ai_features import detect_language, generate_code_from_persian, explain_code, translate_code
                     lang = detect_language(text)
                     lang_names = {
                         "python": "Python",
@@ -591,6 +604,67 @@ Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
                     }
                     lang_name = lang_names.get(lang, "Python")
                     
+                    # Check for code generation request
+                    if any(word in text for word in ["بنویس", "بساز", "کد"]):
+                        code = generate_code_from_persian(text)
+                        if code:
+                            response = f"""✍️ <b>Generated Code ({lang_name}):</b>
+
+<code>{self._escape_html(code)}</code>
+
+💡 <b>Tip:</b> Copy and use this code!"""
+                            await message.reply(response, reply_markup=get_main_keyboard())
+                            return
+                    
+                    # Check for code explanation request
+                    if "توضیح" in text:
+                        code, _ = self._extract_code(message)
+                        if code:
+                            explanation = explain_code(code)
+                            response = f"""📖 <b>Code Explanation:</b>
+
+{explanation}"""
+                            await message.reply(response, reply_markup=get_main_keyboard())
+                            return
+                        else:
+                            await message.reply(
+                                "📝 Send code and I'll explain it!\n\n"
+                                "Example:\n"
+                                "<code>def hello():\n    print('Hi')</code>\n"
+                                "+ توضیح بده",
+                                reply_markup=get_main_keyboard()
+                            )
+                            return
+                    
+                    # Check for translation request
+                    if "ترجمه" in text:
+                        code, _ = self._extract_code(message)
+                        if code:
+                            target = "javascript"
+                            if "java" in text.lower():
+                                target = "java"
+                            elif "python" in text.lower():
+                                target = "python"
+                            
+                            translated = translate_code(code, target)
+                            response = f"""🌍 <b>Translated to {target.title()}:</b>
+
+<code>{self._escape_html(translated)}</code>
+
+💡 <b>Tip:</b> Copy and use this code!"""
+                            await message.reply(response, reply_markup=get_main_keyboard())
+                            return
+                        else:
+                            await message.reply(
+                                "📝 Send code and specify target language!\n\n"
+                                "Example:\n"
+                                "<code>def hello():\n    print('Hi')</code>\n"
+                                "+ ترجمه به JavaScript",
+                                reply_markup=get_main_keyboard()
+                            )
+                            return
+                    
+                    # Default: try to generate code
                     code = generate_code_from_persian(text)
                     if code:
                         response = f"""✍️ <b>Generated Code ({lang_name}):</b>
@@ -599,73 +673,12 @@ Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
 
 💡 <b>Tip:</b> Copy and use this code!"""
                         await message.reply(response, reply_markup=get_main_keyboard())
-                        return
-                
-                # Check for code explanation request
-                if "توضیح" in text:
-                    # Try to extract code from message
-                    code, _ = self._extract_code(message)
-                    if code:
-                        explanation = explain_code(code)
-                        response = f"""📖 <b>Code Explanation:</b>
-
-{explanation}"""
-                        await message.reply(response, reply_markup=get_main_keyboard())
-                        return
-                    else:
-                        await message.reply(
-                            "📝 Send code and I'll explain it!\n\n"
-                            "Example:\n"
-                            "<code>def hello():\n    print('Hi')</code>\n"
-                            "+ توضیح بده",
-                            reply_markup=get_main_keyboard()
-                        )
-                        return
-                
-                # Check for translation request
-                if "ترجمه" in text:
-                    code, _ = self._extract_code(message)
-                    if code:
-                        # Detect target language
-                        target = "javascript"
-                        if "java" in text.lower():
-                            target = "java"
-                        elif "python" in text.lower():
-                            target = "python"
-                        
-                        translated = translate_code(code, target)
-                        response = f"""🌍 <b>Translated to {target.title()}:</b>
-
-<code>{self._escape_html(translated)}</code>
-
-💡 <b>Tip:</b> Copy and use this code!"""
-                        await message.reply(response, reply_markup=get_main_keyboard())
-                        return
-                    else:
-                        await message.reply(
-                            "📝 Send code and specify target language!\n\n"
-                            "Example:\n"
-                            "<code>def hello():\n    print('Hi')</code>\n"
-                            "+ ترجمه به JavaScript",
-                            reply_markup=get_main_keyboard()
-                        )
-                        return
-                
-                # Default: try to generate code
-                code = generate_code_from_persian(text)
-                if code:
-                    response = f"""✍️ <b>Generated Code:</b>
-
-<code>{self._escape_html(code)}</code>
-
-💡 <b>Tip:</b> Copy and use this code!"""
-                    await message.reply(response, reply_markup=get_main_keyboard())
-            except Exception as e:
-                print(f"Error in Persian handler: {e}")
-                await message.reply(
-                    "❌ Error processing request. Please try again.",
-                    reply_markup=get_main_keyboard()
-                )
+                except Exception as e:
+                    print(f"Error in Persian handler: {e}")
+                    await message.reply(
+                        "❌ Error processing request. Please try again.",
+                        reply_markup=get_main_keyboard()
+                    )
         
         # ========== INLINE QUERY HANDLER ==========
         @dp.inline_query()
