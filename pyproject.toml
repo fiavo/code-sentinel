@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-code-reviewer"
+version = "0.1.0"
+description = "AI-powered code review tool"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "Mohammad", email = "mohammad@example.com"}
+]
+keywords = ["code-review", "ai", "linting", "security", "quality"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.4.0",
+    "black>=24.0.0",
+]
+
+[project.scripts]
+code-reviewer = "code_reviewer.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/fiavo/ai-code-reviewer"
+Repository = "https://github.com/fiavo/ai-code-reviewer"
+Issues = "https://github.com/fiavo/ai-code-reviewer/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "S", "B", "A", "COM", "C4"]
+ignore = ["S101"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
