@@ -1,3 +1,4 @@
+LICENSE
 README.md
 pyproject.toml
 src/code_reviewer/__init__.py
@@ -15,6 +16,7 @@ src/code_reviewer/github/pr_review.py
 src/code_reviewer/rules/__init__.py
 src/code_reviewer/telegram/__init__.py
 src/code_reviewer/telegram/__main__.py
+src/code_reviewer/telegram/ai_features.py
 src/code_reviewer/telegram/bot.py
 src/code_sentinel.egg-info/PKG-INFO
 src/code_sentinel.egg-info/SOURCES.txt
