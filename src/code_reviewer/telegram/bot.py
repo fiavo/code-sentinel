@@ -696,7 +696,7 @@ Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
                     )
             
             # Check for Persian code generation keywords
-            persian_keywords = ["بنویس", "بساز", "کد", "چاپ", "سلام دنیا", "hello", "توضیح", "ترجمه", "ماشین حساب", "فیبوناچی", "لیست", "حلقه", "شرط", "کلاس"]
+            persian_keywords = ["بنویس", "بساز", "کد", "چاپ", "سلام دنیا", "hello", "توضیح", "ترجمه", "ماشین حساب", "فیبوناچی", "لیست", "حلقه", "شرط", "کلاس", "رندوم", "عدد", "تاریخ", "زمان", "فایل", "اتصال"]
             
             if any(keyword in text for keyword in persian_keywords):
                 try:

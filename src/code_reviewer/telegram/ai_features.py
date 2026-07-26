@@ -14,6 +14,30 @@ CODE_TEMPLATES = {
         "سلام": 'print("سلام دنیا!")',
         "bye": 'print("Goodbye!")',
         "خداحافظ": 'print("خداحافظ!")',
+        "رندوم": '''import random
+
+# تولید عدد رندوم
+random_number = random.randint(1, 100)
+print(f"عدد رندوم: {random_number}")
+
+# رندوم از یک لیست
+colors = ["قرمز", "آبی", "سبز", "زرد"]
+random_color = random.choice(colors)
+print(f"رنگ رندوم: {random_color}")
+
+# ترتیب رندوم
+numbers = [1, 2, 3, 4, 5]
+random.shuffle(numbers)
+print(f"ترتیب رندوم: {numbers}")''',
+        "عدد": '''import random
+
+# تولید عدد رندوم
+random_number = random.randint(1, 100)
+print(f"عدد رندوم: {random_number}")
+
+# عدد رندوم اعشاری
+random_float = random.random()
+print(f"عدد اعشاری رندوم: {random_float}")''',
         "ماشین حساب": '''def calculator():
     """Simple calculator"""
     print("ماشین حساب ساده")
