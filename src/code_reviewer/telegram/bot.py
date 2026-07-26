@@ -10,13 +10,16 @@ from pathlib import Path
 from ..core.analyzer import CodeAnalyzer, AnalyzerConfig
 from ..core.models import Severity, ReviewResult
 from ..fixers.auto_fix import AutoFixer
+from .ai_features import generate_code_from_persian, translate_code, explain_code
 
 
 # Main keyboard buttons
 MAIN_KEYBOARD = [
     ["🔍 Review", "🔧 Fix"],
     ["📊 Stats", "📈 Analyze"],
-    ["📎 Upload", "❓ Help"],
+    ["💬 Chat", "🌍 Translate"],
+    ["✍️ Write", "📎 Upload"],
+    ["❓ Help"],
 ]
 
 
@@ -75,7 +78,9 @@ class TelegramBot:
                 keyboard=[
                     [KeyboardButton(text="🔍 Review"), KeyboardButton(text="🔧 Fix")],
                     [KeyboardButton(text="📊 Stats"), KeyboardButton(text="📈 Analyze")],
-                    [KeyboardButton(text="📎 Upload"), KeyboardButton(text="❓ Help")],
+                    [KeyboardButton(text="💬 Chat"), KeyboardButton(text="🌍 Translate")],
+                    [KeyboardButton(text="✍️ Write"), KeyboardButton(text="📎 Upload")],
+                    [KeyboardButton(text="❓ Help")],
                 ],
                 resize_keyboard=True,
                 one_time_keyboard=False,
@@ -275,6 +280,66 @@ Lines: {result.lines_analyzed}
                 ".py .js .ts .jsx .tsx .java .go .rs .c .cpp .cs",
                 reply_markup=get_main_keyboard()
             )
+        
+        # Handle keyboard button: Chat (Smart Code Conversation)
+        @dp.message(F.text == "💬 Chat")
+        async def btn_chat(message: Message):
+            text = """
+💬 <b>Smart Code Chat</b>
+
+Send me code and ask questions!
+
+<b>Examples:</b>
+1. Send code + "این تابع چیکار میکنه؟"
+2. Send code + "چطور بهترش کنم؟"
+3. Send code + "باگ کجاست؟"
+
+<b>Or ask me to explain:</b>
+"این کد رو توضیح بده"
+
+Ready to chat! 💡
+"""
+            await message.reply(text, reply_markup=get_main_keyboard())
+        
+        # Handle keyboard button: Translate
+        @dp.message(F.text == "🌍 Translate")
+        async def btn_translate(message: Message):
+            text = """
+🌍 <b>Code Translation</b>
+
+Send code and I'll translate it!
+
+<b>Examples:</b>
+1. "Python to JavaScript" + کد
+2. "Java to Python" + کد
+3. "C++ to Go" + کد
+
+<b>Supported:</b>
+Python ↔ JavaScript ↔ Java ↔ Go ↔ C++ ↔ Rust
+
+Send your code now! 🔄
+"""
+            await message.reply(text, reply_markup=get_main_keyboard())
+        
+        # Handle keyboard button: Write (Generate Code)
+        @dp.message(F.text == "✍️ Write")
+        async def btn_write(message: Message):
+            text = """
+✍️ <b>Write Code for Me</b>
+
+Describe what you need in Persian!
+
+<b>Examples:</b>
+1. "یک کد بنویس که hello چاپ کنه"
+2. "یک تابع بنویس که عدد فیبوناچی برگردونه"
+3. "یک برنامه ماشین حساب بنویس"
+
+<b>Languages:</b>
+Python, JavaScript, Java, C++, Go, Rust
+
+Type your request! 💻
+"""
+            await message.reply(text, reply_markup=get_main_keyboard())
         
         # Handle keyboard button: Help
         @dp.message(F.text == "❓ Help")
@@ -528,6 +593,83 @@ Issues: {len(result.issues)}
 """
                 await message.reply(response, reply_markup=get_main_keyboard())
         
+        # Handle Persian code generation requests
+        @dp.message(F.text.contains("بنویس") | F.text.contains("بساز") | F.text.contains("کد") | F.text.contains("چاپ") | F.text.contains("سلام دنیا") | F.text.contains("hello") | F.text.contains("توضیح") | F.text.contains("ترجمه"))
+        async def handle_persian_request(message: Message):
+            text = message.text or ""
+            
+            # Check for code generation request
+            if any(word in text for word in ["بنویس", "بساز", "کد"]):
+                code = generate_code_from_persian(text)
+                if code:
+                    response = f"""✍️ <b>Generated Code:</b>
+
+<code>{self._escape_html(code)}</code>
+
+💡 <b>Tip:</b> Copy and use this code!"""
+                    await message.reply(response, reply_markup=get_main_keyboard())
+                    return
+            
+            # Check for code explanation request
+            if "توضیح" in text:
+                # Try to extract code from message
+                code, _ = self._extract_code(message)
+                if code:
+                    explanation = explain_code(code)
+                    response = f"""📖 <b>Code Explanation:</b>
+
+{explanation}"""
+                    await message.reply(response, reply_markup=get_main_keyboard())
+                    return
+                else:
+                    await message.reply(
+                        "📝 Send code and I'll explain it!\n\n"
+                        "Example:\n"
+                        "<code>def hello():\n    print('Hi')</code>\n"
+                        "+ توضیح بده",
+                        reply_markup=get_main_keyboard()
+                    )
+                    return
+            
+            # Check for translation request
+            if "ترجمه" in text:
+                code, _ = self._extract_code(message)
+                if code:
+                    # Detect target language
+                    target = "javascript"
+                    if "java" in text.lower():
+                        target = "java"
+                    elif "python" in text.lower():
+                        target = "python"
+                    
+                    translated = translate_code(code, target)
+                    response = f"""🌍 <b>Translated to {target.title()}:</b>
+
+<code>{self._escape_html(translated)}</code>
+
+💡 <b>Tip:</b> Copy and use this code!"""
+                    await message.reply(response, reply_markup=get_main_keyboard())
+                    return
+                else:
+                    await message.reply(
+                        "📝 Send code and specify target language!\n\n"
+                        "Example:\n"
+                        "<code>def hello():\n    print('Hi')</code>\n"
+                        "+ ترجمه به JavaScript",
+                        reply_markup=get_main_keyboard()
+                    )
+                    return
+            
+            # Default: try to generate code
+            code = generate_code_from_persian(text)
+            if code:
+                response = f"""✍️ <b>Generated Code:</b>
+
+<code>{self._escape_html(code)}</code>
+
+💡 <b>Tip:</b> Copy and use this code!"""
+                await message.reply(response, reply_markup=get_main_keyboard())
+        
         # ========== INLINE QUERY HANDLER ==========
         @dp.inline_query()
         async def handle_inline_query(inline_query: InlineQuery):
@@ -619,7 +761,7 @@ Issues: {len(result.issues)}
             return "", ""
         
         # Handle keyboard button presses (ignore them)
-        if text in ["🔍 Review", "🔧 Fix", "📊 Stats", "📈 Analyze", "📎 Upload", "❓ Help"]:
+        if text in ["🔍 Review", "🔧 Fix", "📊 Stats", "📈 Analyze", "📎 Upload", "❓ Help", "💬 Chat", "🌍 Translate", "✍️ Write"]:
             return "", ""
         
         # Plain text code (not a command)
