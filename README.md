@@ -3,10 +3,32 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](https://github.com/fiavo/code-sentinel)
+[![Telegram Bot](https://img.shields.io/badge/Telegram-Bot-26A5E4.svg)](https://t.me/code_sentinelbot)
 
 **AI-Powered Code Review Tool**
 
 Smart code analysis, security scanning, auto-fix, and GitHub PR integration.
+
+---
+
+## 🎮 Live Demo
+
+### Try it now on Telegram!
+
+**🤖 Bot:** [@code_sentinelbot](https://t.me/code_sentinelbot)
+
+**Quick start:**
+1. Open [@code_sentinelbot](https://t.me/code_sentinelbot) in Telegram
+2. Send `/start`
+3. Upload a code file or paste code
+4. Use keyboard buttons for quick actions!
+
+**Inline mode:** Type `@code_sentinelbot` in any chat followed by code:
+```
+@code_sentinelbot password = "secret123"
+```
+
+---
 
 ## Features
 
@@ -18,6 +40,10 @@ Smart code analysis, security scanning, auto-fix, and GitHub PR integration.
 - 🔧 **Auto-Fix** - Automatically fix common issues
 - 🐙 **GitHub Integration** - PR review automation
 - 📱 **Telegram Bot** - Review code from Telegram
+- ⌨️ **Custom Keyboard** - Quick action buttons
+- 📝 **Inline Mode** - Review code in any chat
+
+---
 
 ## Installation
 
@@ -31,6 +57,8 @@ pip install -e ".[telegram]"
 # With all optional dependencies
 pip install -e ".[all]"
 ```
+
+---
 
 ## Usage
 
@@ -65,41 +93,38 @@ print(f"Score: {result.score}")
 print(f"Issues: {len(result.issues)}")
 ```
 
+---
+
 ## 📱 Telegram Bot
 
-### Setup
-
-1. Create a bot with [@BotFather](https://t.me/BotFather)
-2. Get your bot token
-3. Set the token:
-
-```bash
-export TELEGRAM_BOT_TOKEN="your-bot-token"
-```
-
-### Run the Bot
-
-```bash
-# Method 1: Using the entry point
-sentinel-bot
-
-# Method 2: Using Python module
-python -m code_reviewer.telegram.bot
-
-# Method 3: With token argument
-python -m code_reviewer.telegram.bot --token "your-token"
-```
-
-### Bot Commands
+### Commands
 
 | Command | Description |
 |---------|-------------|
-| `/start` | Show welcome message |
-| `/help` | Show help and commands |
-| `/review` | Review code or file |
-| `/analyze` | Quick code analysis |
+| `/start` | Welcome message |
+| `/help` | Show help |
+| `/review` | Review code |
+| `/analyze` | Quick analysis |
 | `/fix` | Auto-fix issues |
 | `/stats` | Code statistics |
+
+### Keyboard Buttons
+
+| Button | Description |
+|--------|-------------|
+| 🔍 Review | Review code |
+| 🔧 Fix | Auto-fix issues |
+| 📊 Stats | Code statistics |
+| 📈 Analyze | Quick analysis |
+| 📎 Upload | Upload instructions |
+| ❓ Help | Help message |
+
+### Inline Mode
+
+Use in any chat:
+```
+@code_sentinelbot print("hello")
+```
 
 ### How to Use
 
@@ -109,25 +134,17 @@ python -m code_reviewer.telegram.bot --token "your-token"
 ```python
 def hello():
     password = "secret123"
-    eval(user_input)
 ```
 ```
 
 **Option 2: File Upload**
 1. Upload a code file (.py, .js, .ts, etc.)
-2. Type `/review`
+2. Use keyboard buttons or type `/review`
 
-**Option 3: Inline Code**
-Just paste code and add `/analyze`
+**Option 3: Inline**
+Just type `@code_sentinelbot` + code in any chat
 
-### Bot Features
-
-- ✅ Supports 10+ programming languages
-- ✅ Analyzes code blocks automatically
-- ✅ File upload support
-- ✅ Auto-fix with diff display
-- ✅ Works in groups and private chats
-- ✅ Detailed statistics
+---
 
 ## GitHub Integration
 
@@ -139,6 +156,8 @@ async def review_pr():
     result = await reviewer.review_pr("owner/repo", 123)
     await reviewer.post_review("owner/repo", 123, result)
 ```
+
+---
 
 ## Supported Languages
 
@@ -153,6 +172,8 @@ async def review_pr():
 - PHP
 - Swift
 - Kotlin
+
+---
 
 ## Rules
 
@@ -200,6 +221,8 @@ class MyRule(BaseRule):
         return issues
 ```
 
+---
+
 ## Configuration
 
 ### Environment Variables
@@ -215,6 +238,8 @@ export GITHUB_TOKEN="ghp_..."
 export TELEGRAM_BOT_TOKEN="your-bot-token"
 ```
 
+---
+
 ## Development
 
 ```bash
@@ -229,6 +254,16 @@ ruff check src/
 ruff format src/
 ```
 
+---
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Support
+
+If you find this project useful, please give it a ⭐ on GitHub!
+
+**Try the bot:** [@code_sentinelbot](https://t.me/code_sentinelbot)
