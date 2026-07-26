@@ -37,11 +37,15 @@ class TelegramBot:
     def _setup_handlers(self):
         """Setup bot command handlers."""
         from aiogram import Bot, Dispatcher, F
+        from aiogram.client.default import DefaultBotProperties
         from aiogram.filters import Command
         from aiogram.types import Message, CallbackQuery
         from aiogram.enums import ParseMode
         
-        self._bot = Bot(token=self.token, parse_mode=ParseMode.HTML)
+        self._bot = Bot(
+            token=self.token,
+            default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+        )
         self._dispatcher = Dispatcher()
         
         dp = self._dispatcher

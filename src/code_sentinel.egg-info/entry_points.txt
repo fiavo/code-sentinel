@@ -1,0 +1,3 @@
+[console_scripts]
+code-sentinel = code_reviewer.cli:main
+sentinel-bot = code_reviewer.telegram.bot:run_bot
