@@ -30,272 +30,201 @@ Provides-Extra: all
 Requires-Dist: aiogram>=3.7.0; extra == "all"
 Dynamic: license-file
 
+<div align="center">
+
 # 🛡️ CodeSentinel
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](https://github.com/fiavo/code-sentinel)
-[![Telegram Bot](https://img.shields.io/badge/Telegram-Bot-26A5E4.svg)](https://t.me/code_sentinelbot)
+**AI-Powered Code Review Bot for Telegram**
 
-**AI-Powered Code Review Tool**
+[![Python](https://img.shields.io/badge/Python-3.7+-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/code_sentinelbot)
+[![PyPI](https://img.shields.io/badge/PyPI-codesentinel--bot-green?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/codesentinel-bot/)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-Smart code analysis, security scanning, auto-fix, and GitHub PR integration.
-
----
-
-## 🎮 Live Demo
-
-### Try it now on Telegram!
-
-**🤖 Bot:** [@code_sentinelbot](https://t.me/code_sentinelbot)
-
-**Quick start:**
-1. Open [@code_sentinelbot](https://t.me/code_sentinelbot) in Telegram
-2. Send `/start`
-3. Upload a code file or paste code
-4. Use keyboard buttons for quick actions!
-
-**Inline mode:** Type `@code_sentinelbot` in any chat followed by code:
-```
-@code_sentinelbot password = "secret123"
-```
+</div>
 
 ---
 
-## Features
+## ✨ Features
 
-- 🛡️ **Security Analysis** - Detect vulnerabilities and secrets
-- ⚡ **Performance Detection** - Find optimization opportunities
-- 🎨 **Style Checking** - Enforce code standards
-- 🧠 **Complexity Analysis** - Measure code complexity
-- 🤖 **AI-Powered** - Deep understanding with OpenAI
-- 🔧 **Auto-Fix** - Automatically fix common issues
-- 🐙 **GitHub Integration** - PR review automation
-- 📱 **Telegram Bot** - Review code from Telegram
-- ⌨️ **Custom Keyboard** - Quick action buttons
-- 📝 **Inline Mode** - Review code in any chat
+- 🤖 **AI-Powered Review** — Smart code analysis using advanced AI
+- 🔒 **Security Scanning** — Detect vulnerabilities and security issues
+- 🔧 **Auto-Fix** — Automatically fix common code problems
+- 🌐 **Inline Queries** — Review code from any Telegram chat
+- ⌨️ **Custom Keyboard** — Easy navigation with built-in buttons
+- 🇮🇷 **Persian Support** — Code explanations in Farsi
+- 💻 **Multi-Language** — Python, C, JavaScript, Java, Go, Rust
 
 ---
 
-## Installation
+## 🚀 Quick Start
+
+### 1. Install via pip
 
 ```bash
-# Basic installation
+pip install codesentinel-bot
+```
+
+### 2. Set up Telegram Bot
+
+1. Talk to [@BotFather](https://t.me/BotFather) on Telegram
+2. Create a new bot and get the token
+3. Set the token as environment variable:
+
+```bash
+export TELEGRAM_BOT_TOKEN="your_token_here"
+```
+
+### 3. Run the Bot
+
+```bash
+python -m codesentinel
+```
+
+---
+
+## 📱 Try the Bot
+
+**👉 [@code_sentinelbot](https://t.me/code_sentinelbot)**
+
+Just send any code snippet and get instant review!
+
+---
+
+## 🧰 Supported Languages
+
+| Language | Support |
+|----------|---------|
+| Python | ✅ Full |
+| C | ✅ Full |
+| JavaScript | ✅ Full |
+| Java | ✅ Full |
+| Go | ✅ Full |
+| Rust | ✅ Full |
+
+---
+
+## 🔍 What It Checks
+
+### Code Quality
+- ✅ Code style and formatting
+- ✅ Naming conventions
+- ✅ Code complexity
+- ✅ Documentation
+
+### Security
+- ✅ Vulnerability detection
+- ✅ Security best practices
+- ✅ Dependency issues
+- ✅ Input validation
+
+### Performance
+- ✅ Optimization suggestions
+- ✅ Memory usage
+- ✅ Algorithm efficiency
+- ✅ Resource management
+
+---
+
+## 📖 Usage Examples
+
+### Basic Review
+```
+/send_code
+def add(a, b):
+    return a + b
+```
+
+### With Language
+```
+/python
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+```
+
+### Security Scan
+```
+/scan
+import os
+os.system(input("Enter command: "))
+```
+
+---
+
+## 🛠️ Development
+
+### Prerequisites
+
+- Python 3.7+
+- pip
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/fiavo/code-sentinel.git
+cd code-sentinel
+
+# Install dependencies
 pip install -e .
 
-# With Telegram bot support
-pip install -e ".[telegram]"
+# Set environment variable
+export TELEGRAM_BOT_TOKEN="your_token"
 
-# With all optional dependencies
-pip install -e ".[all]"
+# Run
+python -m codesentinel
+```
+
+### Project Structure
+
+```
+code-sentinel/
+├── src/
+│   └── code_sentinel/
+│       ├── __init__.py
+│       ├── __main__.py
+│       ├── telegram/
+│       │   └── bot.py
+│       └── analyzer/
+│           └── code_analyzer.py
+├── pyproject.toml
+└── README.md
 ```
 
 ---
 
-## Usage
+## 🤝 Contributing
 
-### CLI
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-```bash
-# Review a file
-code-sentinel review src/main.py
-
-# Review with AI
-code-sentinel review src/ --ai
-
-# Auto-fix issues
-code-sentinel review src/ --fix
-
-# Analyze code string
-code-sentinel analyze "print('hello')"
-
-# Show statistics
-code-sentinel stats ./src
-```
-
-### Python API
-
-```python
-from code_reviewer import CodeAnalyzer
-
-analyzer = CodeAnalyzer()
-result = analyzer.analyze_code('password = "secret123"', "python")
-
-print(f"Score: {result.score}")
-print(f"Issues: {len(result.issues)}")
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing`)
+5. Open a Pull Request
 
 ---
 
-## 📱 Telegram Bot
+## 📄 License
 
-### Commands
-
-| Command | Description |
-|---------|-------------|
-| `/start` | Welcome message |
-| `/help` | Show help |
-| `/review` | Review code |
-| `/analyze` | Quick analysis |
-| `/fix` | Auto-fix issues |
-| `/stats` | Code statistics |
-
-### Keyboard Buttons
-
-| Button | Description |
-|--------|-------------|
-| 🔍 Review | Review code |
-| 🔧 Fix | Auto-fix issues |
-| 📊 Stats | Code statistics |
-| 📈 Analyze | Quick analysis |
-| 📎 Upload | Upload instructions |
-| ❓ Help | Help message |
-
-### Inline Mode
-
-Use in any chat:
-```
-@code_sentinelbot print("hello")
-```
-
-### How to Use
-
-**Option 1: Code Block**
-```
-/review
-```python
-def hello():
-    password = "secret123"
-```
-```
-
-**Option 2: File Upload**
-1. Upload a code file (.py, .js, .ts, etc.)
-2. Use keyboard buttons or type `/review`
-
-**Option 3: Inline**
-Just type `@code_sentinelbot` + code in any chat
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## GitHub Integration
+## 🙏 Acknowledgments
 
-```python
-from code_reviewer.github import GitHubPRReviewer
-
-async def review_pr():
-    reviewer = GitHubPRReviewer(token="ghp_...")
-    result = await reviewer.review_pr("owner/repo", 123)
-    await reviewer.post_review("owner/repo", 123, result)
-```
+- Thanks to all contributors
+- Built with ❤️ by [fiavo](https://github.com/fiavo)
 
 ---
 
-## Supported Languages
+<div align="center">
 
-- Python
-- JavaScript/TypeScript
-- Java
-- Go
-- Rust
-- C/C++
-- C#
-- Ruby
-- PHP
-- Swift
-- Kotlin
+**🛡️ CodeSentinel — Smart Code Review, Powered by AI**
 
----
+[![Star on GitHub](https://img.shields.io/github/stars/fiavo/code-sentinel?style=social)](https://github.com/fiavo/code-sentinel)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/fiavo_dev?style=social)](https://twitter.com/fiavo_dev)
 
-## Rules
-
-### Built-in Rules
-
-| Rule | Category | Description |
-|------|----------|-------------|
-| `security` | Security | Detects security vulnerabilities |
-| `performance` | Performance | Finds performance issues |
-| `style` | Style | Checks code style |
-| `complexity` | Complexity | Analyzes code complexity |
-
-### Custom Rules
-
-```python
-from code_reviewer.core.rules import BaseRule
-from code_reviewer.core.models import CodeIssue, Severity, IssueCategory
-
-class MyRule(BaseRule):
-    @property
-    def name(self) -> str:
-        return "my-rule"
-    
-    @property
-    def description(self) -> str:
-        return "My custom rule"
-    
-    @property
-    def category(self) -> IssueCategory:
-        return IssueCategory.BEST_PRACTICE
-    
-    @property
-    def severity(self) -> Severity:
-        return Severity.WARNING
-    
-    def check(self, file_path: str, content: str) -> list[CodeIssue]:
-        issues = []
-        for line_num, line in enumerate(content.splitlines(), 1):
-            if "TODO" in line:
-                issues.append(self._create_issue(
-                    file_path=file_path,
-                    line=line_num,
-                    message="TODO found",
-                ))
-        return issues
-```
-
----
-
-## Configuration
-
-### Environment Variables
-
-```bash
-# AI Provider
-export OPENAI_API_KEY="sk-..."
-
-# GitHub Integration
-export GITHUB_TOKEN="ghp_..."
-
-# Telegram Bot
-export TELEGRAM_BOT_TOKEN="your-bot-token"
-```
-
----
-
-## Development
-
-```bash
-# Install dev dependencies
-pip install -e ".[all]"
-
-# Run tests
-pytest tests/ -v
-
-# Run linting
-ruff check src/
-ruff format src/
-```
-
----
-
-## License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
----
-
-## 🙏 Support
-
-If you find this project useful, please give it a ⭐ on GitHub!
-
-**Try the bot:** [@code_sentinelbot](https://t.me/code_sentinelbot)
+</div>
