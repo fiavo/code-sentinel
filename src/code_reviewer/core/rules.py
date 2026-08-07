@@ -589,6 +589,7 @@ def _load_all_rules():
             from ..rules.typescript_rules import TypeScriptRules
             from ..rules.typescript_rules_compact import TypeScriptCompactRules
             from ..rules.python_real_world_rules import PythonRealWorldPatterns
+            from ..rules.python_documentation_rules import PythonDocumentationPatterns
 
             ALL_RULES = [
                 # Language-specific (from multilang.py)
@@ -693,7 +694,9 @@ def _load_all_rules():
                 TypeScriptRules(),
                 TypeScriptCompactRules(),
                 PythonRealWorldPatterns(),
+                PythonDocumentationPatterns(),
                 PythonRealWorldPatterns(),
+                PythonDocumentationPatterns(),
             ]
         except ImportError as e:
             print(f"Warning: Could not load some rules: {e}")
