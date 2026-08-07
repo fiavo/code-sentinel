@@ -50,3 +50,4 @@ htmlcov/
 
 # Generated
 src/*.egg-info/
+__pycache__/

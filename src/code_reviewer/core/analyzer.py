@@ -8,7 +8,7 @@ from typing import Optional
 from dataclasses import dataclass
 
 from ..core.models import ReviewResult, FileAnalysis, Severity
-from ..core.rules import BaseRule, DEFAULT_RULES
+from ..core.rules import BaseRule, DEFAULT_RULES, get_all_rules
 
 
 # Language detection by extension
@@ -70,7 +70,7 @@ class AnalyzerConfig:
     
     def __post_init__(self):
         if self.rules is None:
-            self.rules = DEFAULT_RULES.copy()
+            self.rules = get_all_rules()
         if self.exclude_patterns is None:
             self.exclude_patterns = SKIP_PATTERNS.copy()
 

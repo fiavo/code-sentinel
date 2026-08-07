@@ -585,6 +585,34 @@ Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, and more!
             if text in keyboard_buttons:
                 return
             
+            # Check for code patterns (Python, JS, etc.)
+            code_patterns = [
+                r"[pP]rint\s*\(", r"def\s+\w+\s*\(", r"class\s+\w+", r"if\s+.*:",
+                r"for\s+.*:", r"while\s+.*:", r"import\s+\w+", r"from\s+\w+\s+import",
+                r"function\s+\w+", r"const\s+\w+", r"let\s+\w+", r"var\s+\w+",
+                r"return\s+", r"console\.log", r"document\.", r"window\."
+            ]
+            
+            import re
+            is_code = any(re.search(p, text) for p in code_patterns)
+            
+            if is_code:
+                try:
+                    code, language = self._extract_code(message)
+                    if not code:
+                        code = text
+                    result = self.analyzer.analyze_code(code, language)
+                    response = f"""🔍 <b>Code Detected</b>
+
+{self._format_result(result)}
+
+<b>Tip:</b> Use buttons below for more actions!"""
+                    await message.reply(response, reply_markup=get_main_keyboard())
+                    return
+                except Exception as e:
+                    await message.reply(f"❌ Error analyzing code: {str(e)}")
+                    return
+            
             # Check for Persian code generation keywords
             persian_keywords = ["بنویس", "بساز", "کد", "چاپ", "سلام دنیا", "hello", "توضیح", "ترجمه", "ماشین حساب", "فیبوناچی", "لیست", "حلقه", "شرط", "کلاس", "رندوم", "عدد", "تاریخ", "زمان", "فایل", "اتصال"]
             
